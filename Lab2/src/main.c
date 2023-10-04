@@ -35,8 +35,12 @@
 //#define PB5 13          // In Arduino world, PB5 is called "13"
 //#define PB0 8
 // -----
-#define PB5 5
+#define PB4 4
+#define PB3 3
+#define PB2 2
+#define PB1 1
 #define PB0 0
+#define PB5 5
 // -----
 
 
@@ -60,13 +64,24 @@ int main(void)
     //DDRB |= (1<<LED_RED);
 
     // Ver 3: Library function style
-    GPIO_mode_output(&DDRB, LED_GREEN);
-    GPIO_mode_output(&DDRB, LED_RED);
+    //GPIO_mode_output(&DDRB, LED_GREEN);
+    //GPIO_mode_output(&DDRB, LED_RED);
+
+    GPIO_mode_output(&DDRB, PB0);
+    GPIO_mode_output(&DDRB, PB1);
+    GPIO_mode_output(&DDRB, PB2);
+    GPIO_mode_output(&DDRB, PB3);
+    GPIO_mode_output(&DDRB, PB4);
+    GPIO_mode_input_nopull(&DDRB, PB5);
+
+    while (!GPIO_read(&PINB, PB5)){}
+    while (GPIO_read(&PINB, PB5)){}
+    
 
     // Infinite loop
     while (1)
     {
-        // Pause several milliseconds
+        /*// Pause several milliseconds
         _delay_ms(SHORT_DELAY);
 
         // Change LED value
@@ -89,6 +104,19 @@ int main(void)
             //PORTB &= ~(1<<LED_RED);
             GPIO_write_low(&PORTB, LED_GREEN);
             GPIO_write_low(&PORTB, LED_RED);
+        }*/
+
+        for(int i = 0; i < 5; i++)
+        {
+          GPIO_write_high(&PORTB,i);
+          _delay_ms(SHORT_DELAY);
+          GPIO_write_low(&PORTB,i);
+        }
+        for(int i = 4; i <= 0; i--)
+        {
+          GPIO_write_high(&PORTB,i);
+          _delay_ms(SHORT_DELAY);
+          GPIO_write_low(&PORTB,i);
         }
     }
 
