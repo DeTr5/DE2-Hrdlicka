@@ -56,10 +56,12 @@ int main(void)
     //pinMode(LED_RED, OUTPUT);
 
     // Ver 2: Low-level (register) style
-    DDRB |= (1<<LED_GREEN);
-    DDRB |= (1<<LED_RED);
+    //DDRB |= (1<<LED_GREEN);
+    //DDRB |= (1<<LED_RED);
 
     // Ver 3: Library function style
+    GPIO_mode_output(&DDRB, LED_GREEN);
+    GPIO_mode_output(&DDRB, LED_RED);
 
     // Infinite loop
     while (1)
@@ -73,16 +75,20 @@ int main(void)
             // Set pin(s) to HIGH
             //digitalWrite(LED_GREEN, HIGH);
             //digitalWrite(LED_RED, HIGH);
-            PORTB |= (1<<LED_GREEN);
-            PORTB |= (1<<LED_RED);
+            //PORTB |= (1<<LED_GREEN);
+            //PORTB |= (1<<LED_RED);
+            GPIO_write_high(&PORTB, LED_GREEN);
+            GPIO_write_high(&PORTB, LED_RED);
         }
         else {
             led_value = 0;
             // Clear pin(s) to LOW
             //digitalWrite(LED_GREEN, LOW);
             //digitalWrite(LED_RED, LOW);
-            PORTB &= ~(1<<LED_GREEN);
-            PORTB &= ~(1<<LED_RED);
+            //PORTB &= ~(1<<LED_GREEN);
+            //PORTB &= ~(1<<LED_RED);
+            GPIO_write_low(&PORTB, LED_GREEN);
+            GPIO_write_low(&PORTB, LED_RED);
         }
     }
 
