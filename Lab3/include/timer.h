@@ -65,6 +65,23 @@
  * @note  t_OVF = 1/F_CPU * prescaler * 2^n where n = 8, F_CPU = 16 MHz
  */
 // WRITE YOUR CODE HERE
+/** @brief Stop timer, prescaler 000 --> STOP */
+#define TIM0_STOP      TCCR0B &= ~((1<<CS02) | (1<<CS01) | (1<<CS00));
+/** @brief Set overflow 16us, prescaler 001 --> 1 */
+#define TIM0_OVF_16U   TCCR0B &= ~((1<<CS02) | (1<<CS01)); TCCR0B |= (1<<CS00);
+/** @brief Set overflow 128us, prescaler 010 --> 8 */
+#define TIM0_OVF_128U  TCCR0B &= ~((1<<CS02) | (1<<CS00)); TCCR0B |= (1<<CS01);
+/** @brief Set overflow 1ms, prescaler 011 --> 64 */
+#define TIM0_OVF_1MS   TCCR0B &= ~(1<<CS02); TCCR0B |= (1<<CS01) | (1<<CS00);
+/** @brief Set overflow 4ms, prescaler 100 --> 256 */
+#define TIM0_OVF_4MS   TCCR0B &= ~((1<<CS01) | (1<<CS00)); TCCR0B |= (1<<CS02);
+/** @brief Set overflow 16ms, prescaler // 101 --> 1024 */
+#define TIM0_OVF_16MS  TCCR0B &= ~(1<<CS01); TCCR0B |= (1<<CS02) | (1<<CS00);
+
+/** @brief Enable overflow interrupt, 1 --> enable */
+#define TIM0_OVF_ENABLE  TIMSK0 |= (1<<TOIE1);
+/** @brief Disable overflow interrupt, 0 --> disable */
+#define TIM0_OVF_DISABLE TIMSK0 &= ~(1<<TOIE1);
 
 
 /**
@@ -72,6 +89,10 @@
  * @note  t_OVF = 1/F_CPU * prescaler * 2^n where n = 8, F_CPU = 16 MHz
  */
 // WRITE YOUR CODE HERE
+/** @brief Stop timer, prescaler 000 --> STOP */
+#define TIM2_STOP      TCCR2B &= ~((1<<CS22) | (1<<CS21) | (1<<CS20));
+/** @brief Set overflow 16us, prescaler 001 --> 1 */
+#define TIM2_OVF_16U   TCCR0B &= ~((1<<CS22) | (1<<CS21)); TCCR0B |= (1<<CS20);
 
 
 /** @} */
