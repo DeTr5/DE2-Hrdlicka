@@ -9,3 +9,10 @@ in the development cycle.
 
 More information about PlatformIO Unit Testing:
 - https://docs.platformio.org/en/latest/advanced/unit-testing/index.html
+
+
+   | **Module** | **Number of bits** | **1** | **8** | **32** | **64** | **128** | **256** | **1024** |
+   | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
+   | Timer/Counter0 | 8  | 16u | 128u | -- | 1024u | -- | 4069u | 16384u |
+   | Timer/Counter1 | 16 | 4ms | 32ms | -- | | -- | | |
+   | Timer/Counter2 | 8  | 16u |      |    | |    | | |
