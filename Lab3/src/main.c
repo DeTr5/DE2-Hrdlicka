@@ -80,4 +80,18 @@ ISR(TIMER2_OVF_vect)
         PORTB = PORTB ^ (1<<LED_RED);
     }
     // Else do nothing and exit the ISR
+    // Change 8-bit timer value anytime it overflows
+    TCNT2 = 128;
+    // Overflow time: t_ovf = 1/f_cpu * (2^bit-init) * prescaler
+    // Normal counting:
+    // TCNT2 = 0, 1, 2, ...., 128, 129, ...., 254, 255, 0, 1
+    //        |---------------------------------------|
+    //                         16 ms
+    // t_ovf = 1/16e6 * 256 * 1024 = 16 ms
+    //
+    // Shortened counting:
+    // TCNT2 = 0, 128, 129, ...., 254, 255, 0, 128, ....
+    //        |---------------------------|
+    //                     8 ms
+    // t_ovf = 1/16e6 * (256-128) * 1024 = 8 ms
 }
