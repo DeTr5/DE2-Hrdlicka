@@ -41,8 +41,8 @@ int main(void)
     // Set the overflow prescaler to 262 ms and enable interrupt
     TIM1_OVF_262MS
     TIM1_OVF_ENABLE
-    TIM0_OVF_16MS
-    TIM0_OVF_ENABLE
+    TIM2_OVF_16MS
+    TIM2_OVF_ENABLE
 
     // Enables interrupts by setting the global interrupt mask
     sei();
@@ -68,7 +68,7 @@ ISR(TIMER1_OVF_vect)
 {
     PORTB = PORTB ^ (1<<LED_GREEN);
 }
-ISR(TIMER0_OVF_vect)
+ISR(TIMER2_OVF_vect)
 {
     static uint8_t no_of_overflows = 0;
 

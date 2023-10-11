@@ -106,6 +106,10 @@
 /** @brief Set overflow 16ms, prescaler 111 --> 1024 */
 #define TIM2_OVF_16MS  TCCR2B |= (1<<CS22) | (1<<CS21) | (1<<CS20);
 
+/** @brief Enable overflow interrupt, 1 --> enable */
+#define TIM2_OVF_ENABLE  TIMSK2 |= (1<<TOIE1);
+/** @brief Disable overflow interrupt, 0 --> disable */
+#define TIM2_OVF_DISABLE TIMSK2 &= ~(1<<TOIE1);
 
 /** @} */
 
