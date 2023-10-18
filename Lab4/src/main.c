@@ -42,19 +42,46 @@
  *           Timer/Counter2 overflows.
  * Returns:  none
  **********************************************************************/
+
+#define N_CHARS 1  // Number of new custom characters
+
 int main(void)
 {
+    uint8_t customChar[N_CHARS*8] = {
+	      0b00000,
+      	0b00100,
+	      0b00100,
+	      0b01010,
+	      0b01010,
+	      0b11111,
+	      0b10101,
+	      0b00000
+    };
+
     // Initialize display
-    lcd_init(LCD_DISP_ON_CURSOR_BLINK);
+    lcd_init(LCD_DISP_ON_CURSOR);
+
+    lcd_command(1<<LCD_CGRAM);       // Set addressing to CGRAM (Character Generator RAM)
+                                     // ie to individual lines of character patterns
+    for (uint8_t i = 0; i < N_CHARS*8; i++)  // Copy new character patterns line by line to CGRAM
+        lcd_data(customChar[i]);
+    lcd_command(1<<LCD_DDRAM);       // Set addressing back to DDRAM (Display Data RAM)
+                                     // ie to character codes
 
     // Put string(s) on LCD screen
-    lcd_gotoxy(6, 1);
-    lcd_puts("LCD Test");
-    lcd_putc('!');
+    lcd_gotoxy(1, 0);
+    lcd_puts("00:00.0");
+    lcd_gotoxy(11, 0);
+    lcd_putc(0x00);
+    lcd_gotoxy(1, 1);
+    lcd_putc('b');
+    lcd_gotoxy(11, 1);
+    lcd_putc('c');
 
     // Configuration of 8-bit Timer/Counter2 for Stopwatch update
     // Set the overflow prescaler to 16 ms and enable interrupt
-
+    TIM2_OVF_16MS
+    TIM2_OVF_ENABLE
 
     // Enables interrupts by setting the global interrupt mask
     sei();
@@ -81,6 +108,8 @@ ISR(TIMER2_OVF_vect)
 {
     static uint8_t no_of_overflows = 0;
     static uint8_t tenths = 0;  // Tenths of a second
+    static uint8_t seconds = 0;
+    static uint8_t minutes = 0;
     char string[2];             // String for converted numbers by itoa()
 
     no_of_overflows++;
@@ -90,12 +119,40 @@ ISR(TIMER2_OVF_vect)
         no_of_overflows = 0;
 
         // Count tenth of seconds 0, 1, ..., 9, 0, 1, ...
-
+        tenths++;
+        if(tenths > 9)
+        {
+          tenths = 0;
+          seconds++;
+          if(seconds > 59)
+          {
+            seconds = 0;
+            lcd_gotoxy(4,0);
+            lcd_putc('0');
+            minutes++;
+            if(minutes > 59)
+            {
+              minutes = 0;
+              lcd_gotoxy(1,0);
+              lcd_putc('0');
+            }
+          }
+        }
 
         itoa(tenths, string, 10);  // Convert decimal value to string
         // Display "00:00.tenths"
         lcd_gotoxy(7, 0);
         lcd_puts(string);
+
+        itoa(seconds, string, 10);  // Convert decimal value to string
+        seconds < 10 ? lcd_gotoxy(5, 0) : lcd_gotoxy(4,0);
+        lcd_puts(string);
+
+        itoa(minutes, string, 10);  // Convert decimal value to string
+        minutes < 10 ? lcd_gotoxy(2, 0) : lcd_gotoxy(1,0);
+        lcd_puts(string);
+        
+        lcd_gotoxy(12, 1);
     }
     // Else do nothing and exit the ISR
 }
