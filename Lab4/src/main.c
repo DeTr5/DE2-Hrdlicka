@@ -171,6 +171,9 @@ ISR(TIMER2_OVF_vect)
         minutes < 10 ? lcd_gotoxy(2, 0) : lcd_gotoxy(1,0);
         lcd_puts(string);
         lcd_putc(':');
+
+        lcd_gotoxy(14,0);
+        lcd_putc(seconds+176);
     }
     // Else do nothing and exit the ISR
 }
