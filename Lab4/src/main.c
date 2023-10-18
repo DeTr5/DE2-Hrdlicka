@@ -43,7 +43,7 @@
  * Returns:  none
  **********************************************************************/
 
-#define N_CHARS 1  // Number of new custom characters
+#define N_CHARS 3  // Number of new custom characters
 
 int main(void)
 {
@@ -55,11 +55,29 @@ int main(void)
 	      0b01010,
 	      0b11111,
 	      0b10101,
+	      0b00000,
+
+        0b00000,
+	      0b00000,
+	      0b00000,
+	      0b01110,
+	      0b11000,
+	      0b11110,
+	      0b11110,
+	      0b01010,
+
+        0b00000,
+	      0b00000,
+      	0b01110,
+	      0b11000,
+	      0b11110,
+	      0b11111,
+	      0b10000,
 	      0b00000
     };
 
     // Initialize display
-    lcd_init(LCD_DISP_ON_CURSOR);
+    lcd_init(LCD_DISP_ON);
 
     lcd_command(1<<LCD_CGRAM);       // Set addressing to CGRAM (Character Generator RAM)
                                      // ie to individual lines of character patterns
@@ -73,15 +91,15 @@ int main(void)
     lcd_puts("00:00.0");
     lcd_gotoxy(11, 0);
     lcd_putc(0x00);
-    lcd_gotoxy(1, 1);
-    lcd_putc('b');
-    lcd_gotoxy(11, 1);
-    lcd_putc('c');
+    lcd_gotoxy(0, 1);
+    lcd_putc(0x01);
 
     // Configuration of 8-bit Timer/Counter2 for Stopwatch update
     // Set the overflow prescaler to 16 ms and enable interrupt
     TIM2_OVF_16MS
     TIM2_OVF_ENABLE
+    TIM0_OVF_16MS
+    TIM0_OVF_ENABLE
 
     // Enables interrupts by setting the global interrupt mask
     sei();
@@ -147,12 +165,36 @@ ISR(TIMER2_OVF_vect)
         itoa(seconds, string, 10);  // Convert decimal value to string
         seconds < 10 ? lcd_gotoxy(5, 0) : lcd_gotoxy(4,0);
         lcd_puts(string);
+        lcd_putc('.');
 
         itoa(minutes, string, 10);  // Convert decimal value to string
         minutes < 10 ? lcd_gotoxy(2, 0) : lcd_gotoxy(1,0);
         lcd_puts(string);
-        
-        lcd_gotoxy(12, 1);
+        lcd_putc(':');
     }
     // Else do nothing and exit the ISR
+}
+
+ISR(TIMER0_OVF_vect)
+{
+  static uint8_t no_of_overflows = 0;
+  static uint8_t currChar = 1;
+  static uint8_t currPos = 0;
+
+  no_of_overflows++;
+  if (no_of_overflows >= 18)
+  {
+    no_of_overflows = 0;
+    lcd_gotoxy(currPos, 1);
+    lcd_putc(' ');
+
+    if(currChar == 1) currChar = 2;
+    else currChar = 1;
+
+    currPos++;
+    if(currPos > 15) currPos = 0;
+
+    lcd_gotoxy(currPos, 1);
+    lcd_putc(currChar);
+  }
 }
