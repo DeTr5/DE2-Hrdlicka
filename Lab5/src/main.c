@@ -39,8 +39,10 @@ int main(void)
     
     // Configure 16-bit Timer/Counter1 to transmit UART data
     // Set prescaler to 262 ms and enable overflow interrupt
-    TIM1_OVF_262MS
+    TIM1_OVF_4SEC
     TIM1_OVF_ENABLE
+    TIM0_OVF_16U
+    TIM0_OVF_ENABLE
 
     // Enables interrupts by setting the global interrupt mask
     sei();
@@ -59,7 +61,7 @@ int main(void)
     *   \x1b[4,32m  - Set underline style, green foreground
     *   \x1b[0m     - Reset all attributes
     */
-    uart_puts("\x1b[4;32m");  // 4: underline style; 32: green foreground
+    /*uart_puts("\x1b[4;32m");  // 4: underline style; 32: green foreground
     uart_puts("This is all Green and Underlined\r\n");
     uart_puts("\x1b[0m");     // 0: reset all attributes
     uart_puts("This is Normal text again\r\n");
@@ -67,7 +69,7 @@ int main(void)
     uart_puts("This is all Red and Italic\r\n");
     uart_puts("\x1b[0;1;36m");
 
-    uart_puts("Char\tDec\tBin\tHex\r\n");
+    uart_puts("Char\tDec\tBin\tHex\r\n");*/
 
     // Infinite loop
     while (1)
@@ -91,7 +93,7 @@ ISR(TIMER1_OVF_vect)
 
     //uart_puts("Paris\n");
 
-    uint8_t value;
+    /*uint8_t value;
     char string[8];  // String for converted numbers by itoa()
 
     value = uart_getc();
@@ -108,5 +110,28 @@ ISR(TIMER1_OVF_vect)
         itoa(value, string, 16);
         uart_puts(string);
         uart_puts("\r\n");
+    }*/
+    
+}
+ISR(TIMER0_OVF_vect)
+{
+    uint64_t value;
+    char string[64];  // String for converted numbers by itoa()
+
+    value = uart_getc();
+    if (value != '\0') {     // Data available from UART
+        if (value == '1') 
+        {
+          itoa(TCNT1, string, 10);
+          uart_puts(string);
+          uart_puts("\r\n");
+        }
+        if (value == '2') 
+        {
+          TCNT1=0;
+          itoa(TCNT1, string, 10);
+          uart_puts(string);
+          uart_puts("\r\n");
+        }
     }
 }
