@@ -39,7 +39,8 @@ int main(void)
     
     // Configure 16-bit Timer/Counter1 to transmit UART data
     // Set prescaler to 262 ms and enable overflow interrupt
-
+    TIM1_OVF_262MS
+    TIM1_OVF_ENABLE
 
     // Enables interrupts by setting the global interrupt mask
     sei();
@@ -47,6 +48,26 @@ int main(void)
     // Put strings to ringbuffer for transmitting via UART
     uart_puts("Print one line... ");
     uart_puts("done\r\n");
+
+    /* 
+    * Color/formatting sequence is prefixed with `Escape` (`\x1b` in hexadecimal,
+    * \033, etc), followed by opening square bracket `[`, commands delimited by 
+    * semi colon `;` and ended by `m` character.
+    *
+    * Examples:
+    *   \x1b[1;31m  - Set style to bold, red foreground
+    *   \x1b[4,32m  - Set underline style, green foreground
+    *   \x1b[0m     - Reset all attributes
+    */
+    uart_puts("\x1b[4;32m");  // 4: underline style; 32: green foreground
+    uart_puts("This is all Green and Underlined\r\n");
+    uart_puts("\x1b[0m");     // 0: reset all attributes
+    uart_puts("This is Normal text again\r\n");
+    uart_puts("\x1b[3;31m");
+    uart_puts("This is all Red and Italic\r\n");
+    uart_puts("\x1b[0;1;36m");
+
+    uart_puts("Char\tDec\tBin\tHex\r\n");
 
     // Infinite loop
     while (1)
@@ -67,4 +88,25 @@ int main(void)
 ISR(TIMER1_OVF_vect)
 {
     // Transmit UART string(s)
+
+    //uart_puts("Paris\n");
+
+    uint8_t value;
+    char string[8];  // String for converted numbers by itoa()
+
+    value = uart_getc();
+    if (value != '\0') {  // Data available from UART
+        // Display ASCII code of received character
+        uart_putc(value);
+        uart_puts("\t");
+        itoa(value, string, 10);
+        uart_puts(string);
+        uart_puts("\t");
+        itoa(value, string, 2);
+        uart_puts(string);
+        uart_puts("\t");
+        itoa(value, string, 16);
+        uart_puts(string);
+        uart_puts("\r\n");
+    }
 }
