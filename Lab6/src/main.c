@@ -88,10 +88,14 @@ int main(void)
     oled_puts("128x64, SHH1106");
 
     // oled_drawLine(x1, y1, x2, y2, color)
-    oled_drawLine(0, 25, 120, 25, WHITE);
+    oled_drawLine(0, 25, 127, 25, WHITE);
 
-    oled_gotoxy(0, 4);
-    oled_puts("BPC-DE2, Brno");
+    oled_gotoxy(0,4);
+    oled_puts("Temperature: ");
+    oled_gotoxy(0,5);
+    oled_puts("Humidity:    ");
+
+    oled_drawRect(0,0,127,62,WHITE);
 
     // Copy buffer to display RAM
     oled_display();
@@ -108,17 +112,28 @@ int main(void)
             itoa(dht12.temp_int, string, 10);
             uart_puts(string);
             uart_puts(".");
+            oled_gotoxy(13,4);
+            oled_puts(string);
+            oled_puts(".");
             itoa(dht12.temp_dec, string, 10);
             uart_puts(string);
-            uart_puts(" °C\r\n");
+            uart_puts(" °C\t");
+            oled_puts(string);
+            oled_puts(" °C");
 
             itoa(dht12.hum_int, string, 10);
             uart_puts(string);
             uart_puts(".");
+            oled_gotoxy(13,5);
+            oled_puts(string);
+            oled_puts(".");
             itoa(dht12.hum_dec, string, 10);
             uart_puts(string);
             uart_puts(" %\r\n");
-
+            oled_puts(string);
+            oled_puts(" %");
+            
+            oled_display();
             // Do not print it again and wait for the new data
             new_sensor_data = 0;
         }
