@@ -25,6 +25,7 @@
 #include <twi.h>            // I2C/TWI library for AVR-GCC
 #include <uart.h>           // Peter Fleury's UART library
 #include <stdlib.h>         // C library. Needed for number conversions
+#include <oled.h>
 
 
 /* Global variables --------------------------------------------------*/
@@ -73,6 +74,27 @@ int main(void)
         uart_puts("[ERROR] I2C device not detected\r\n");
         while (1);
     }
+
+    oled_init(OLED_DISP_ON);
+    oled_clrscr();
+
+    oled_charMode(DOUBLESIZE);
+    oled_puts("OLED disp.");
+
+    oled_charMode(NORMALSIZE);
+
+    // oled_gotoxy(x, y)
+    oled_gotoxy(0, 2);
+    oled_puts("128x64, SHH1106");
+
+    // oled_drawLine(x1, y1, x2, y2, color)
+    oled_drawLine(0, 25, 120, 25, WHITE);
+
+    oled_gotoxy(0, 4);
+    oled_puts("BPC-DE2, Brno");
+
+    // Copy buffer to display RAM
+    oled_display();
 
     // Timer1
     TIM1_OVF_1SEC
